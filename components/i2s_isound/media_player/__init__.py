@@ -114,7 +114,7 @@ async def to_code(config):
     cg.add_library(
         name="ESP32-audioI2S-esphome",
         repository="https://github.com/tv4you2016/ESP32-audioI2S-esphome",
-        version="2.0.8",
+        version="2.0.9",
     )
     # cg.add_library("esphome/ESP32-audioI2S", "2.0.7")
 
