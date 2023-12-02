@@ -7,12 +7,19 @@ esp32:
   framework:
     type: arduino
 
+external_components:
+  - source:
+      type: git
+      url: https://github.com/tv4you2016/iSound-esphome
+    components: [ i2s_isound ]
+
+
 # Enable logging
 logger:
   level: VERBOSE
   logs:
     isound.component: VERBOSE
-    
+
 # Enable Home Assistant API
 api:
   encryption:
