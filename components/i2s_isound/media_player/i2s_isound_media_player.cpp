@@ -155,7 +155,7 @@ void I2SAudioMediaPlayer::start_() {
     pin_config.data_out_num = this->dout_pin_;
     i2s_set_pin(this->parent_->get_port(), &pin_config);
 
-    this->audio_->i2s_mclk_pin_select(pin_config.mck_io_num);
+    // this->audio_->i2s_mclk_pin_select(pin_config.mck_io_num); fi: version audiolib > 2.0.8
 
     ESP_LOGCONFIG(TAG, "%d", pin_config.mck_io_num);
 
