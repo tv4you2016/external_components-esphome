@@ -8,7 +8,7 @@ namespace esphome {
 namespace i2s_isound {
 
 static const uint8_t MCLK_signal[] = {0x06};
-static const uint8_t GAIN[] = {0x5D};
+static const uint8_t GAIN[] = {0x51};
 static const char *const TAG = "isound";
 
 void I2SAudioMediaPlayer::control(const media_player::MediaPlayerCall &call) {
