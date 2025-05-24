@@ -2,7 +2,7 @@
 
 #ifdef USE_ESP32
 
-#include "../i2s_audio.h"
+#include "../i2s_audio_dev.h"
 
 #include "esphome/components/microphone/microphone.h"
 #include "esphome/core/component.h"
@@ -13,7 +13,7 @@
 #include <freertos/task.h>
 
 namespace esphome {
-namespace i2s_audio {
+namespace i2s_audio_dev {
 
 class I2SAudioMicrophone : public I2SAudioIn, public microphone::Microphone, public Component {
  public:
