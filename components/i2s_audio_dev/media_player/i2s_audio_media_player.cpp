@@ -157,10 +157,10 @@ void I2SAudioMediaPlayer::start_() {
 
 #if SOC_I2S_SUPPORTS_DAC
   if (this->internal_dac_mode_ != I2S_DAC_CHANNEL_DISABLE) {
-    this->audio_ = make_unique<Audio>(true, this->internal_dac_mode_, this->parent_->get_port());
+    this->audio_ = make_unique<Audio>(this->parent_->get_port());
   } else {
 #endif
-    this->audio_ = make_unique<Audio>(false, 3, this->parent_->get_port());
+    this->audio_ = make_unique<Audio>(this->parent_->get_port());
 
     i2s_pin_config_t pin_config = this->parent_->get_pin_config();
     pin_config.data_out_num = this->dout_pin_;
