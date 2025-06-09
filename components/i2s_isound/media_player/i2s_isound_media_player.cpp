@@ -144,7 +144,7 @@ void I2SAudioMediaPlayer::start_() {
 #if SOC_I2S_SUPPORTS_DAC
 
   if (this->internal_dac_mode_ != I2S_DAC_CHANNEL_DISABLE) {
-    this->audio_ = make_unique<Audio>(true, this->internal_dac_mode_, this->parent_->get_port());
+    this->audio_ = make_unique<Audio>(this->parent_->get_port());
 
   } else {
 #endif
