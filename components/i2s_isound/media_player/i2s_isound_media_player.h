@@ -24,7 +24,10 @@ enum I2SState : uint8_t {
   I2S_STATE_STOPPING,
 };
 
-class I2SAudioMediaPlayer : public Component, public Parented<I2SAudioComponent>, public media_player::MediaPlayer, public i2c::I2CDevice {
+class I2SAudioMediaPlayer : public Component,
+                            public media_player::MediaPlayer,
+                            public I2SAudioOut,
+                            public i2c::I2CDevice {
  public:
   void setup() override;
   float get_setup_priority() const override { return esphome::setup_priority::LATE; }
@@ -79,7 +82,6 @@ class I2SAudioMediaPlayer : public Component, public Parented<I2SAudioComponent>
   HighFrequencyLoopRequester high_freq_;
 
   optional<std::string> current_url_{};
-  bool is_announcement_{false};
 };
 
 }  // namespace i2s_isound

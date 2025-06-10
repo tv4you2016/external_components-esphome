@@ -2,18 +2,13 @@
 
 #ifdef USE_ESP32
 
-#include "../i2s_audio_dev.h"
+#include "../i2s_isound.h"
 
 #include "esphome/components/microphone/microphone.h"
 #include "esphome/core/component.h"
 
-#include <freertos/FreeRTOS.h>
-#include <freertos/event_groups.h>
-#include <freertos/semphr.h>
-#include <freertos/task.h>
-
 namespace esphome {
-namespace i2s_audio_dev {
+namespace i2s_isound {
 
 class I2SAudioMicrophone : public I2SAudioIn, public microphone::Microphone, public Component {
  public:
@@ -23,63 +18,39 @@ class I2SAudioMicrophone : public I2SAudioIn, public microphone::Microphone, pub
 
   void loop() override;
 
-  void set_correct_dc_offset(bool correct_dc_offset) { this->correct_dc_offset_ = correct_dc_offset; }
-
-#ifdef USE_I2S_LEGACY
   void set_din_pin(int8_t pin) { this->din_pin_ = pin; }
-#else
-  void set_din_pin(int8_t pin) { this->din_pin_ = (gpio_num_t) pin; }
-#endif
-
   void set_pdm(bool pdm) { this->pdm_ = pdm; }
 
-#ifdef USE_I2S_LEGACY
+  size_t read(int16_t *buf, size_t len) override;
+
 #if SOC_I2S_SUPPORTS_ADC
   void set_adc_channel(adc1_channel_t channel) {
     this->adc_channel_ = channel;
     this->adc_ = true;
   }
 #endif
-#endif
+
+  void set_channel(i2s_channel_fmt_t channel) { this->channel_ = channel; }
+  void set_bits_per_sample(i2s_bits_per_sample_t bits_per_sample) { this->bits_per_sample_ = bits_per_sample; }
 
  protected:
-  bool start_driver_();
-  void stop_driver_();
+  void start_();
+  void stop_();
+  void read_();
 
-  /// @brief Attempts to correct a microphone DC offset; e.g., a microphones silent level is offset from 0. Applies a
-  /// correction offset that is updated using an exponential moving average for all samples away from 0.
-  /// @param data
-  void fix_dc_offset_(std::vector<uint8_t> &data);
-
-  size_t read_(uint8_t *buf, size_t len, TickType_t ticks_to_wait);
-
-  /// @brief Sets the Microphone ``audio_stream_info_`` member variable to the configured I2S settings.
-  void configure_stream_settings_();
-
-  static void mic_task(void *params);
-
-  SemaphoreHandle_t active_listeners_semaphore_{nullptr};
-  EventGroupHandle_t event_group_{nullptr};
-
-  TaskHandle_t task_handle_{nullptr};
-
-#ifdef USE_I2S_LEGACY
   int8_t din_pin_{I2S_PIN_NO_CHANGE};
 #if SOC_I2S_SUPPORTS_ADC
   adc1_channel_t adc_channel_{ADC1_CHANNEL_MAX};
   bool adc_{false};
 #endif
-#else
-  gpio_num_t din_pin_{I2S_GPIO_UNUSED};
-  i2s_chan_handle_t rx_handle_;
-#endif
   bool pdm_{false};
+  i2s_channel_fmt_t channel_;
+  i2s_bits_per_sample_t bits_per_sample_;
 
-  bool correct_dc_offset_;
-  int32_t dc_offset_{0};
+  HighFrequencyLoopRequester high_freq_;
 };
 
-}  // namespace i2s_audio
+}  // namespace i2s_isound
 }  // namespace esphome
 
 #endif  // USE_ESP32
