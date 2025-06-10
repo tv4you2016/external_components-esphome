@@ -153,6 +153,8 @@ void I2SAudioMediaPlayer::play_() {
 
 void I2SAudioMediaPlayer::start() { this->i2s_state_ = I2S_STATE_STARTING; }
 void I2SAudioMediaPlayer::start_() {
+  ESP_LOGCONFIG(TAG, "start_...");
+
   if (!this->parent_->try_lock()) {
     return;  // Waiting for another i2s to return lock
   }
