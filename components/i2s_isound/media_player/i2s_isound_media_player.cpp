@@ -7,8 +7,8 @@
 namespace esphome {
 namespace i2s_isound {
 
-static const uint8_t MCLK_signal[] = {0x06};
-static const uint8_t GAIN[] = {0x51};
+
+static const uint8_t GAIN[] = {0xCF};
 static const char *const TAG = "isound";
 
 void I2SAudioMediaPlayer::control(const media_player::MediaPlayerCall &call) {
@@ -226,14 +226,8 @@ media_player::MediaPlayerTraits I2SAudioMediaPlayer::get_traits() {
 void I2SAudioMediaPlayer::dump_config() {
   ESP_LOGCONFIG(TAG, "Audio:");
 
-  if (!this->write_bytes(0x13, MCLK_signal, sizeof(MCLK_signal))) {
-    ESP_LOGE(TAG, "MCLK_signal failed!");
-    this->mark_failed();
-    return;
-  } else
-    ESP_LOGCONFIG(TAG, "MCLK_signal OK...");
 
-  if (!this->write_bytes(0x06, GAIN, sizeof(GAIN))) {
+  if (!this->write_bytes(0x04, GAIN, sizeof(GAIN))) {
     ESP_LOGE(TAG, "GAIN failed!");
     this->mark_failed();
     return;
