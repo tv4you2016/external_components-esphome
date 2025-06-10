@@ -1,11 +1,11 @@
 from esphome import pins
 import esphome.codegen as cg
-from esphome.components import esp32, media_player
+from esphome.components import esp32, media_player , i2c
 import esphome.config_validation as cv
 from esphome.const import CONF_MODE
 
 from .. import (
-    CONF_I2S_AUDIO_ID_DEV,
+    CONF_I2S_ISOUND_ID,
     CONF_I2S_DOUT_PIN,
     CONF_LEFT,
     CONF_MONO,
@@ -13,15 +13,16 @@ from .. import (
     CONF_STEREO,
     I2SAudioComponent,
     I2SAudioOut,
-    i2s_audio_dev_ns,
+    i2s_isound_ns,
     use_legacy,
 )
 
 CODEOWNERS = ["@jesserockz"]
-DEPENDENCIES = ["i2s_audio_dev"]
+DEPENDENCIES = ["i2s_isound"]
 
-I2SAudioMediaPlayer = i2s_audio_dev_ns.class_(
-    "I2SAudioMediaPlayer", cg.Component, media_player.MediaPlayer, I2SAudioOut
+I2SAudioMediaPlayer = i2s_isound_ns.class_(
+    "I2SAudioMediaPlayer", cg.Component, media_player.MediaPlayer, I2SAudioOut,
+    i2c.I2CDevice
 )
 
 i2s_dac_mode_t = cg.global_ns.enum("i2s_dac_mode_t")
@@ -60,7 +61,7 @@ CONFIG_SCHEMA = cv.All(
             "internal": media_player.media_player_schema(I2SAudioMediaPlayer)
             .extend(
                 {
-                    cv.GenerateID(CONF_I2S_AUDIO_ID_DEV): cv.use_id(I2SAudioComponent),
+                    cv.GenerateID(CONF_I2S_ISOUND_ID): cv.use_id(I2SAudioComponent),
                     cv.Required(CONF_MODE): cv.enum(INTERNAL_DAC_OPTIONS, lower=True),
                 }
             )
@@ -68,7 +69,7 @@ CONFIG_SCHEMA = cv.All(
             "external": media_player.media_player_schema(I2SAudioMediaPlayer)
             .extend(
                 {
-                    cv.GenerateID(CONF_I2S_AUDIO_ID_DEV): cv.use_id(I2SAudioComponent),
+                    cv.GenerateID(CONF_I2S_ISOUND_ID): cv.use_id(I2SAudioComponent),
                     cv.Required(
                         CONF_I2S_DOUT_PIN
                     ): pins.internal_gpio_output_pin_number,
@@ -82,6 +83,7 @@ CONFIG_SCHEMA = cv.All(
                 }
             )
             .extend(cv.COMPONENT_SCHEMA),
+			.extend(i2c.i2c_device_schema(0x6C)),
         },
         key=CONF_DAC_TYPE,
     ),
@@ -101,8 +103,8 @@ FINAL_VALIDATE_SCHEMA = _final_validate
 async def to_code(config):
     var = await media_player.new_media_player(config)
     await cg.register_component(var, config)
-
-    await cg.register_parented(var, config[CONF_I2S_AUDIO_ID_DEV])
+	await i2c.register_i2c_device(var, config)
+    await cg.register_parented(var, config[CONF_I2S_ISOUND_ID])
 
     if config[CONF_DAC_TYPE] == "internal":
         cg.add(var.set_internal_dac_mode(config[CONF_MODE]))

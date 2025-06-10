@@ -30,8 +30,8 @@ CONF_I2S_MCLK_PIN = "i2s_mclk_pin"
 CONF_I2S_BCLK_PIN = "i2s_bclk_pin"
 CONF_I2S_LRCLK_PIN = "i2s_lrclk_pin"
 
-CONF_I2S_AUDIO_DEV = "i2s_audio_dev"
-CONF_I2S_AUDIO_ID_DEV = "i2s_audio_dev_id"
+CONF_I2S_ISOUND = "i2s_isound"
+CONF_I2S_ISOUND_ID = "i2s_isound_id"
 
 CONF_I2S_MODE = "i2s_mode"
 CONF_PRIMARY = "primary"
@@ -48,13 +48,13 @@ CONF_BOTH = "both"
 
 CONF_USE_LEGACY = "use_legacy"
 
-i2s_audio_dev_ns = cg.esphome_ns.namespace("i2s_audio_dev")
-I2SAudioComponent = i2s_audio_dev_ns.class_("I2SAudioComponent", cg.Component)
-I2SAudioBase = i2s_audio_dev_ns.class_(
+i2s_isound_ns = cg.esphome_ns.namespace("i2s_isound")
+I2SAudioComponent = i2s_isound_ns.class_("I2SAudioComponent", cg.Component)
+I2SAudioBase = i2s_isound_ns.class_(
     "I2SAudioBase", cg.Parented.template(I2SAudioComponent)
 )
-I2SAudioIn = i2s_audio_dev_ns.class_("I2SAudioIn", I2SAudioBase)
-I2SAudioOut = i2s_audio_dev_ns.class_("I2SAudioOut", I2SAudioBase)
+I2SAudioIn = i2s_isound_ns.class_("I2SAudioIn", I2SAudioBase)
+I2SAudioOut = i2s_isound_ns.class_("I2SAudioOut", I2SAudioBase)
 
 i2s_mode_t = cg.global_ns.enum("i2s_mode_t")
 I2S_MODE_OPTIONS = {
@@ -145,7 +145,7 @@ def validate_mclk_divisible_by_3(config):
 _use_legacy_driver = None
 
 
-def i2s_audio_dev_component_schema(
+def i2s_isound_component_schema(
     class_: MockObjClass,
     *,
     default_sample_rate: int,
@@ -178,7 +178,7 @@ def i2s_audio_dev_component_schema(
     )
 
 
-async def register_i2s_audio_dev_component(var, config):
+async def register_i2s_isound_component(var, config):
     await cg.register_parented(var, config[CONF_I2S_AUDIO_ID_DEV])
     if use_legacy():
         cg.add(var.set_i2s_mode(I2S_MODE_OPTIONS[config[CONF_I2S_MODE]]))
@@ -214,7 +214,7 @@ def validate_use_legacy(value):
             _use_legacy_driver != value[CONF_USE_LEGACY]
         ):
             raise cv.Invalid(
-                f"All i2s_audio_dev components must set {CONF_USE_LEGACY} to the same value."
+                f"All i2s_isound components must set {CONF_USE_LEGACY} to the same value."
             )
         if (not value[CONF_USE_LEGACY]) and (CORE.using_arduino):
             raise cv.Invalid("Arduino supports only the legacy i2s driver.")
@@ -237,7 +237,7 @@ CONFIG_SCHEMA = cv.All(
 
 
 def _final_validate(_):
-    i2s_audio_dev_configs = fv.full_config.get()[CONF_I2S_AUDIO_DEV]
+    i2s_isound_configs = fv.full_config.get()[CONF_I2S_ISOUND]
     variant = get_esp32_variant()
     if variant not in I2S_PORTS:
         raise cv.Invalid(f"Unsupported variant {variant}")
