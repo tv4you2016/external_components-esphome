@@ -154,6 +154,20 @@ void I2SAudioMediaPlayer::play_() {
 void I2SAudioMediaPlayer::start() { this->i2s_state_ = I2S_STATE_STARTING; }
 void I2SAudioMediaPlayer::start_() {
   ESP_LOGCONFIG(TAG, "start_...");
+  
+  
+  
+  if (!this->write_bytes(0x04, GAIN, sizeof(GAIN))) {
+    ESP_LOGE(TAG, "GAIN failed!");
+    this->mark_failed();
+    return;
+  } else
+    ESP_LOGCONFIG(TAG, "GAIN OK...");
+
+  if (this->is_failed()) {
+    ESP_LOGCONFIG(TAG, "Audio failed to initialize!");
+    return;
+  }
 
   if (!this->parent_->try_lock()) {
     return;  // Waiting for another i2s to return lock
@@ -229,17 +243,6 @@ void I2SAudioMediaPlayer::dump_config() {
   ESP_LOGCONFIG(TAG, "Audio:");
 
 
-  if (!this->write_bytes(0x04, GAIN, sizeof(GAIN))) {
-    ESP_LOGE(TAG, "GAIN failed!");
-    this->mark_failed();
-    return;
-  } else
-    ESP_LOGCONFIG(TAG, "GAIN OK...");
-
-  if (this->is_failed()) {
-    ESP_LOGCONFIG(TAG, "Audio failed to initialize!");
-    return;
-  }
 #if SOC_I2S_SUPPORTS_DAC
   if (this->internal_dac_mode_ != I2S_DAC_CHANNEL_DISABLE) {
     switch (this->internal_dac_mode_) {
