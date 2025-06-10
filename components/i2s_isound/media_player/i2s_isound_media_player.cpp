@@ -158,11 +158,20 @@ void I2SAudioMediaPlayer::start_() {
   
   
   if (!this->write_bytes(0x04, GAIN, sizeof(GAIN))) {
-    ESP_LOGE(TAG, "GAIN failed!");
+    ESP_LOGE(TAG, "GAIN 0x04 failed!");
     this->mark_failed();
     return;
   } else
     ESP_LOGCONFIG(TAG, "GAIN OK...");
+
+
+  if (!this->write_bytes(0x05, GAIN, sizeof(GAIN))) {
+    ESP_LOGE(TAG, "GAIN 0x05 failed!");
+    this->mark_failed();
+    return;
+  } else
+    ESP_LOGCONFIG(TAG, "GAIN OK...");
+
 
   if (this->is_failed()) {
     ESP_LOGCONFIG(TAG, "Audio failed to initialize!");
@@ -184,8 +193,8 @@ void I2SAudioMediaPlayer::start_() {
     pin_config.data_out_num = this->dout_pin_;
     i2s_set_pin(this->parent_->get_port(), &pin_config);
 
-    this->audio_->setI2SCommFMT_LSB(this->i2s_comm_fmt_lsb_);
-    this->audio_->forceMono(this->external_dac_channels_ == 1);
+   
+   
     if (this->mute_pin_ != nullptr) {
       this->mute_pin_->setup();
       this->mute_pin_->digital_write(false);
