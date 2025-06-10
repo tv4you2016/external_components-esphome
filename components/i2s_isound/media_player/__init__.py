@@ -103,7 +103,7 @@ FINAL_VALIDATE_SCHEMA = _final_validate
 async def to_code(config):
     var = await media_player.new_media_player(config)
     await cg.register_component(var, config)
-	await i2c.register_i2c_device(var, config)
+    await i2c.register_i2c_device(var, config)
     await cg.register_parented(var, config[CONF_I2S_ISOUND_ID])
 
     if config[CONF_DAC_TYPE] == "internal":
