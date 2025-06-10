@@ -118,11 +118,11 @@ async def to_code(config):
 
     cg.add_library("WiFiClientSecure", None)
     cg.add_library("HTTPClient", None)
-    #cg.add_library("esphome/ESP32-audioI2S", "2.3.0")
-    cg.add_library(
-        name="ESP32-audioI2S-esphome",
-        repository="https://github.com/tv4you2016/ESP32-audioI2S-esphome",
-        version="3.0.13",
-    )    
+    cg.add_library("esphome/ESP32-audioI2S", "2.3.0")
+    #cg.add_library(
+    #    name="ESP32-audioI2S-esphome",
+    #    repository="https://github.com/tv4you2016/ESP32-audioI2S-esphome",
+    #    version="3.0.13",
+    #)    
 
     cg.add_build_flag("-DAUDIO_NO_SD_FS")
