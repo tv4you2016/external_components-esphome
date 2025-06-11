@@ -1,32 +1,47 @@
 esphome:
   name: isound
-  friendly_name: iSound
-
+  friendly_name: Isound
+  on_boot:
+    - priority: 600
+      then:
+        - switch.turn_off: addr
 esp32:
   board: esp32dev
   framework:
     type: arduino
+    platform_version: https://github.com/pioarduino/platform-espressif32/releases/download/53.03.11/platform-espressif32.zip
+
 
 external_components:
   - source:
       type: git
-      url: https://github.com/tv4you2016/iSound-esphome
+      url: https://github.com/tv4you2016/external_components-esphome
     components: [ i2s_isound ]
 
+psram:
+
+# Example configuration entry
+debug:
+  update_interval: 1s
+
+text_sensor:
+  - platform: debug
+    device:
+      name: "Device Info"
+    reset_reason:
+      name: "Reset Reason"
 
 # Enable logging
 logger:
-  level: VERBOSE
-  logs:
-    isound.component: VERBOSE
 
 # Enable Home Assistant API
 api:
   encryption:
-    key: "nRO7yR6ToxNrcf1JHcNIk4nFEPHN17I/q12KuT8Ph/k="
+    key: "LvNU48bwzbsR7/IRIpLVWObts4a2kXAQxYljFhgLQrk="
 
 ota:
-  password: "be71c0cea304b6f32b15420941ecaba9"
+  - platform: esphome
+    password: "34d297f63eef9ea75b76892359dbd10e"
 
 wifi:
   ssid: !secret wifi_ssid
@@ -35,7 +50,7 @@ wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "Isound Fallback Hotspot"
-    password: "XFPDNn1Q0GFL"
+    password: "nUrXchmz3Vuz"
 
 web_server:
   port: 80
@@ -43,19 +58,12 @@ web_server:
 captive_portal:
 
 sensor:
-  - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
-    name: "WiFi Signal dB"
-    id: wifi_signal_db
+  - platform: wifi_signal
+    name: "WiFi Signal Sensor"
     update_interval: 60s
-    entity_category: "diagnostic"
-
-  - platform: copy # Reports the WiFi signal strength in %
-    source_id: wifi_signal_db
-    name: "WiFi Signal Percent"
-    filters:
-      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
-    unit_of_measurement: "Signal %"
-    entity_category: "diagnostic"
+  - platform: debug
+    free:
+      name: "Heap Free"
 
 i2c:
   sda: GPIO33
@@ -66,7 +74,26 @@ i2s_isound:
   - i2s_lrclk_pin: GPIO25
     i2s_bclk_pin: GPIO26
     i2s_mclk_pin: GPIO0
-    
+
+
+button:
+  - platform: restart
+    name: "Living Room Restart"
+
+switch:
+  - platform: gpio
+    pin: GPIO14
+    name: "ADR"
+    id: addr
+    restore_mode: ALWAYS_OFF
+
+ # - platform: gpio
+ #   pin: 
+ #     number: GPIO18
+ #   id: MUTE
+ #   name: "MUTE"
+ #   inverted: true
+ #   restore_mode: ALWAYS_OFF
 
 media_player:
   - platform: i2s_isound
@@ -75,9 +102,10 @@ media_player:
     dac_type: external
     i2s_dout_pin: GPIO27
     mute_pin: 
-      number: 18
+      number: GPIO18
       inverted: true
-      mode:
-        output: true
-        open_drain: true
-    mode: mono
+      #mode:
+      #  output: true
+      #  open_drain: true
+    mode: stereo
+    
