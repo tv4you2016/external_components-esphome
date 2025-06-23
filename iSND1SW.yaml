@@ -1,29 +1,28 @@
 esphome:
-  libraries:
-    - Networking
-    - NetworkClientSecure
-
-  name: isound
-  friendly_name: Isound
+  name: isoundv3
+  friendly_name: IsoundV3
   on_boot:
     - priority: 600
       then:
         - switch.turn_off: addr
 esp32:
   board: esp32dev
-  framework:
-    type: arduino 
+  framework:  
+    type: arduino
+    platform_version: "https://github.com/pioarduino/platform-espressif32/releases/download/53.03.11/platform-espressif32.zip"
 
+
+
+# Specify the sources for external components
 external_components:
   - source:
       type: git
       url: https://github.com/tv4you2016/external_components-esphome
-    components: [ i2s_isound ]
-    
-  - source: github://pr#8604
-    components: [ac_dimmer, async_tcp, captive_portal, esp32, esp32_rmt, esp32_rmt_led_strip, ethernet, heatpumpir, http_request, i2c, i2s_audio, ledc, logger, md5, neopixelbus, network, nextion, online_image, remote_base, remote_receiver, remote_transmitter, web_server_base, wifi]
-    refresh: 1h
+    components: [ i2s_audio ]
+
+
 psram:
+
 
 # Example configuration entry
 debug:
@@ -75,10 +74,12 @@ i2c:
   scl: GPIO32
   frequency: 400kHz
 
-i2s_isound:
+i2s_audio:
   - i2s_lrclk_pin: GPIO25
     i2s_bclk_pin: GPIO26
     i2s_mclk_pin: GPIO0
+
+
 
 
 button:
@@ -88,20 +89,13 @@ button:
 switch:
   - platform: gpio
     pin: GPIO14
-    name: "ADR"
+    name: "6C/6D"
     id: addr
     restore_mode: ALWAYS_OFF
 
- # - platform: gpio
- #   pin: 
- #     number: GPIO18
- #   id: MUTE
- #   name: "MUTE"
- #   inverted: true
- #   restore_mode: ALWAYS_OFF
 
 media_player:
-  - platform: i2s_isound
+  - platform: i2s_audio
     name: iSound
     id: iSound
     dac_type: external
@@ -109,8 +103,5 @@ media_player:
     mute_pin: 
       number: GPIO18
       inverted: true
-      #mode:
-      #  output: true
-      #  open_drain: true
     mode: stereo
     
