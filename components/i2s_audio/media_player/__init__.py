@@ -1,6 +1,6 @@
 from esphome import pins
 import esphome.codegen as cg
-from esphome.components import esp32, media_player, i2c
+from esphome.components import esp32, media_player , i2c
 import esphome.config_validation as cv
 from esphome.const import CONF_MODE
 
@@ -21,7 +21,7 @@ CODEOWNERS = ["@jesserockz"]
 DEPENDENCIES = ["i2s_audio"]
 
 I2SAudioMediaPlayer = i2s_audio_ns.class_(
-    "I2SAudioMediaPlayer", cg.Component, media_player.MediaPlayer, I2SAudioOut , i2c.I2CDevice,
+    "I2SAudioMediaPlayer", cg.Component, media_player.MediaPlayer, I2SAudioOut, i2c.I2CDevice,
 )
 
 i2s_dac_mode_t = cg.global_ns.enum("i2s_dac_mode_t")
@@ -103,7 +103,7 @@ async def to_code(config):
     var = await media_player.new_media_player(config)
     await cg.register_component(var, config)
     await i2c.register_i2c_device(var, config)
-    await cg.register_parented(var, config[CONF_I2S_ISOUND_ID])
+    await cg.register_parented(var, config[CONF_I2S_AUDIO_ID])
 
     if config[CONF_DAC_TYPE] == "internal":
         cg.add(var.set_internal_dac_mode(config[CONF_MODE]))
@@ -115,10 +115,7 @@ async def to_code(config):
         cg.add(var.set_external_dac_channels(2 if config[CONF_MODE] == "stereo" else 1))
         cg.add(var.set_i2s_comm_fmt_lsb(config[CONF_I2S_COMM_FMT] == "lsb"))
     
-    framework_ver: cv.Version = CORE.data[KEY_CORE][KEY_FRAMEWORK_VERSION]
-    if framework_ver.major < 3:
-        cg.add_library("WiFiClientSecure", None)
-    else:
+
         cg.add_library("Networking", None)
         cg.add_library("NetworkClientSecure", None)
     #cg.add_library("esphome/ESP32-audioI2S", "2.3.0")

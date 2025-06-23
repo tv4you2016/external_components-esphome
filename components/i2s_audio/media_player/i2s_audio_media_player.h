@@ -10,6 +10,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/gpio.h"
 #include "esphome/core/helpers.h"
+#include "esphome/components/i2c/i2c.h"
 
 #include <Audio.h>
 
@@ -23,7 +24,7 @@ enum I2SState : uint8_t {
   I2S_STATE_STOPPING,
 };
 
-class I2SAudioMediaPlayer : public Component, public Parented<I2SAudioComponent>, public media_player::MediaPlayer {
+class I2SAudioMediaPlayer : public Component, public Parented<I2SAudioComponent>, public media_player::MediaPlayer, public i2c::I2CDevice {
  public:
   void setup() override;
   float get_setup_priority() const override { return esphome::setup_priority::LATE; }
