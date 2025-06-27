@@ -183,7 +183,7 @@ void I2SAudioMediaPlayer::start_() {
     this->audio_ = make_unique<Audio>(this->parent_->get_port());
   } else {
 #endif
-    this->audio_ = make_unique<Audio>(this->parent_->get_port());
+    this->audio_ = make_unique<Audio>();
 
     i2s_pin_config_t pin_config = this->parent_->get_pin_config();
     pin_config.data_out_num = this->dout_pin_;
