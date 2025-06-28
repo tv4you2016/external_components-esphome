@@ -187,9 +187,10 @@ void I2SAudioMediaPlayer::start_() {
 
     i2s_pin_config_t pin_config = this->parent_->get_pin_config();
     pin_config.data_out_num = this->dout_pin_;
-    i2s_set_pin(this->parent_->get_port(), &pin_config);
 
-   
+    ESP_LOGCONFIG(TAG,"bck_io_num: %d  ws_io_num: %d data_out_num: %d,data_in_num: %d \n",pin_config.bck_io_num, pin_config.ws_io_num,pin_config.data_out_num, pin_config.data_in_num);
+    //i2s_set_pin(this->parent_->get_port(), &pin_config);
+    this->audio_->setPinout(pin_config.bck_io_num, pin_config.ws_io_num,pin_config.data_out_num,0);
    
     if (this->mute_pin_ != nullptr) {
       this->mute_pin_->setup();
