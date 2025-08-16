@@ -126,3 +126,5 @@ async def to_code(config):
     )    
 
     cg.add_build_flag("-DAUDIO_NO_SD_FS")
+    cg.add_build_flag("-DCORE_DEBUG_LEVEL=0")
+
