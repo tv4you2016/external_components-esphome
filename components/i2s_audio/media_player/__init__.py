@@ -3,6 +3,8 @@ import esphome.codegen as cg
 from esphome.components import esp32, media_player , i2c
 import esphome.config_validation as cv
 from esphome.const import CONF_MODE
+from esphome.core import CORE
+from esphome.components.esp32 import add_idf_component
 
 from .. import (
     CONF_I2S_AUDIO_ID,
@@ -127,4 +129,5 @@ async def to_code(config):
 
     cg.add_build_flag("-DAUDIO_NO_SD_FS")
     cg.add_build_flag("-DCORE_DEBUG_LEVEL=0")
+    add_idf_component(name="espressif/esp-dsp", ref="1.7.1")
 
